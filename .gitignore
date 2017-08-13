@@ -1,0 +1,13 @@
+
+
+#Ignore Compiled Code
+
+build/
+
+#FPGA
+FPGA/creator_core/build/*
+
+#MCU
+MCU/creator/build/*
+
+#HAL
