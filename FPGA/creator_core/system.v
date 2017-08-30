@@ -57,8 +57,8 @@ module system
   //Serial Communication Pins
   input  SAM_TX,	       
   output SAM_RX,
-  output SAM_TX_EXTERNAL_PIN,
-  input  SAM_RX_EXTERNAL_PIN,
+  output laptop_RX,
+  input  laptop_TX,
  
   /* IR */
   input  TX_PI,
@@ -73,8 +73,8 @@ module system
   inout [GPIO_WIDTH-1:0] gpio_io,
   
   //EM358 
-  input       Z_RX,        
-  output      Z_TX,
+  //input       Z_RX,        
+  //output      Z_TX,
 
   
   /* Debug */
@@ -82,8 +82,8 @@ module system
 );
 
 //Connect SAM MCU Uart Pins to external pins
-assign SAM_TX_EXTERNAL_PIN = SAM_TX;
-assign SAM_RX = SAM_RX_EXTERNAL_PIN;
+assign laptop_RX = SAM_TX;
+assign SAM_RX = laptop_TX;
 
 
 //Set up IR
@@ -94,9 +94,10 @@ assign IR_RING_EN = IR_RING_EN_PI;
 assign debug_led  = ~RX_IR;
 
 //Set up UART-EM3588
-assign Z_TX   = UART_RX_PI;
-assign UART_TX_PI = Z_RX;
+//assign Z_TX   = 1;
+//assign UART_TX_PI = Z_RX;
 
+assign UART_TX_PI =SAM_TX;
 
 wire clk;
 wire nclk;

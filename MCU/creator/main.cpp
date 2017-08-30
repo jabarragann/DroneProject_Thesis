@@ -21,6 +21,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "board.h"
+#include "chprintf.h"
 
 #include <math.h>
 #include <string.h>
@@ -130,6 +131,18 @@ static msg_t IMUThread(void *arg) {
   return (0);
 }
 
+static WORKING_AREA(waThread1, 128);
+static msg_t Thread1(void *arg) {
+  (void)arg;
+  while (TRUE) {
+    palClearPad(IOPORT3, 17);
+    chThdSleepMilliseconds(1000);
+    palSetPad(IOPORT3, 17);
+    chThdSleepMilliseconds(1000);
+  }
+  return(0);
+}
+
 /*
  * Application entry point.
  */
@@ -145,13 +158,28 @@ int main(void) {
   BOARD_ConfigurePSRAM(SMC);
 
   i2c.Init();
+  
+  sdStart(&SD1, NULL);  /* Activates the serial driver 2 */ 
+  
+  /* Creates the blinker thread. */
+  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
   /* Creates the imu thread. */
-  chThdCreateStatic(waIMUThread, sizeof(waIMUThread), NORMALPRIO, IMUThread,
-                    NULL);
+  //chThdCreateStatic(waIMUThread, sizeof(waIMUThread), NORMALPRIO, IMUThread,NULL);
 
   /* Creates the hum thread. */
-  chThdCreateStatic(waEnvThread, sizeof(waEnvThread), NORMALPRIO, EnvThread,
-                    NULL);
+  //chThdCreateStatic(waEnvThread, sizeof(waEnvThread), NORMALPRIO, EnvThread,NULL);
+
+
+  uint32_t i=0;
+	
+  while (TRUE)
+  {
+	chprintf((BaseChannel *)&SD1, "Hello Juan, i am number %d \n\r", i);
+	i=i+2;	
+	
+	chThdSleepMilliseconds(1000);
+  }
 
   return (0);
 }

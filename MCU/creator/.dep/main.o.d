@@ -63,6 +63,7 @@ build/obj/main.o: main.cpp ../third_party/ChibiOS/os/kernel/include/ch.h \
  ../third_party/ChibiOS/os/hal/include/usb.h \
  ../third_party/ChibiOS/os/hal/include/mmc_spi.h \
  ../third_party/ChibiOS/os/hal/include/serial_usb.h \
+ ../third_party/ChibiOS/os/various/chprintf.h \
  /home/santi/arm-2013.11/arm-none-eabi/include/math.h \
  /home/santi/arm-2013.11/arm-none-eabi/include/sys/reent.h \
  /home/santi/arm-2013.11/arm-none-eabi/include/sys/_types.h \
@@ -214,6 +215,8 @@ mcuconf.h:
 ../third_party/ChibiOS/os/hal/include/mmc_spi.h:
 
 ../third_party/ChibiOS/os/hal/include/serial_usb.h:
+
+../third_party/ChibiOS/os/various/chprintf.h:
 
 /home/santi/arm-2013.11/arm-none-eabi/include/math.h:
 
