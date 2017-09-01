@@ -52,6 +52,7 @@ void psram_copy(uint8_t mem_offset, char *data, uint8_t len) {
   }
 }
 
+
 static WORKING_AREA(waEnvThread, 256);
 static msg_t EnvThread(void *arg) {
   (void)arg;
@@ -94,6 +95,7 @@ static msg_t EnvThread(void *arg) {
 }
 
 static WORKING_AREA(waIMUThread, 512);
+
 static msg_t IMUThread(void *arg) {
   (void)arg;
   LSM9DS1 imu(&i2c, IMU_MODE_I2C, 0x6A, 0x1C);
@@ -102,7 +104,12 @@ static msg_t IMUThread(void *arg) {
 
   IMUData data;
 
+  uint32_t i=0;
+
   while (true) {
+	chprintf((BaseChannel *)&SD1, "number %d \n\r", i);
+	i=i+1;	
+
     imu.readGyro();
     data.gyro_x = imu.calcGyro(imu.gx);
     data.gyro_y = imu.calcGyro(imu.gy);
@@ -131,15 +138,30 @@ static msg_t IMUThread(void *arg) {
   return (0);
 }
 
-static WORKING_AREA(waThread1, 128);
+
+static WORKING_AREA(waThread1, 64);
 static msg_t Thread1(void *arg) {
   (void)arg;
-  while (TRUE) {
-    palClearPad(IOPORT3, 17);
-    chThdSleepMilliseconds(1000);
-    palSetPad(IOPORT3, 17);
-    chThdSleepMilliseconds(1000);
+  
+  
+  uint32_t i=0;
+	
+  while (TRUE)
+  {
+	chprintf((BaseChannel *)&SD1, "Hello Juan A, i am number %d \n\r", i);
+	i=i+1;	
+	
+	if   (i%2==0){
+		palClearPad(IOPORT3, 17);
+	}
+	else {
+		palSetPad(IOPORT3, 17);
+	}
+		
+	chThdSleepMilliseconds(100);
   }
+  
+  
   return(0);
 }
 
@@ -162,24 +184,14 @@ int main(void) {
   sdStart(&SD1, NULL);  /* Activates the serial driver 2 */ 
   
   /* Creates the blinker thread. */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  //chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /* Creates the imu thread. */
-  //chThdCreateStatic(waIMUThread, sizeof(waIMUThread), NORMALPRIO, IMUThread,NULL);
+  chThdCreateStatic(waIMUThread, sizeof(waIMUThread), NORMALPRIO, IMUThread,NULL);
 
   /* Creates the hum thread. */
-  //chThdCreateStatic(waEnvThread, sizeof(waEnvThread), NORMALPRIO, EnvThread,NULL);
+  chThdCreateStatic(waEnvThread, sizeof(waEnvThread), NORMALPRIO, EnvThread,NULL);
 
-
-  uint32_t i=0;
-	
-  while (TRUE)
-  {
-	chprintf((BaseChannel *)&SD1, "Hello Juan, i am number %d \n\r", i);
-	i=i+2;	
-	
-	chThdSleepMilliseconds(1000);
-  }
 
   return (0);
 }
