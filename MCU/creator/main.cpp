@@ -104,10 +104,14 @@ static msg_t IMUThread(void *arg) {
 
   IMUData data;
 
+  //Sending a Float throught the serial port
+  //The number is split int chars and then send has hexadecimal values. 
   uint32_t i=0;
+  float pi=12.567201;   #0x41491341
+  char *fPointer = (char *) &pi;
 
   while (true) {
-	chprintf((BaseChannel *)&SD1, "number %d \n\r", i);
+	chprintf((BaseChannel *)&SD1, "%x%x%x%x\n\r",fPointer[3],fPointer[2],fPointer[1],fPointer[0]);
 	i=i+1;	
 
     imu.readGyro();
